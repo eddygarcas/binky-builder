@@ -1,4 +1,4 @@
-# Binky::Builder ![Travis](https://travis-ci.org/eddygarcas/binky-builder.svg?branch=master) [![RubyGems](https://badgen.net/rubygems/v/binky-builder)](https://rubygems.org/gems/binky-builder)
+# Binky::Builder ![Travis](https://travis-ci.org/eddygarcas/binky-builder.svg) [![RubyGems](https://badgen.net/rubygems/v/binky-builder)](https://rubygems.org/gems/binky-builder)
 
 ## Installation
 
