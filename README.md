@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-Builder modules to create either class ghost methods from a given json or an open struct.
+OpenStruct and accessor builder modules. 
 
 ## Development
 
