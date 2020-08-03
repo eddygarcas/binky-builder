@@ -6,13 +6,14 @@ module Binky
     # Parses a given json structure looking for specific keys inside the structure.
     # Keys are given through a block.
     # The result of it it's stored on a instance variable called to_hash and accessible through accessors with same name.
-    def build_by_keys(json = {})
+    def build_by_keys(json = {}, keys = nil)
       accessor_builder('to_hash',{})
-      keys = yield self || json&.keys
-      raise ArgumentError unless keys&.respond_to?(:each)
-      keys.each do |key|
+      k = keys || json&.keys
+      raise ArgumentError unless k&.respond_to?(:each)
+      k.each do |key|
         @to_hash.merge!({key => nested_hash_value(json,key)})
       end unless json&.blank?
+      yield self if block_given?
     end
 
     # Builds an instance variable as well as its class method accessors from a key value pair.
