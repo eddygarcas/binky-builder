@@ -21,7 +21,7 @@ OpenStruct and accessor builder modules.
 
 ### Used as OpenStruct
 Initialize an instance using json data, including the Builder class on your class definition.
-Once initialized just use the accessors as a normal class instance. 
+Once initialized just use the accessors as any other instance. 
 ```ruby
   class Issue
     include Binky::Builder
@@ -31,20 +31,40 @@ Once initialized just use the accessors as a normal class instance.
       super_initialize json
     end
   end
+  
+  issue = Issue.new({id: 1234})
+  issue.id # => 1234
 ```
 
 ### Used on ActiveRecord models
 Binky-Builder includes another helper that can be used to initialize *ActiveRecord* models based on its column names.
 ```ruby
-class ChangeLog < ApplicationRecord
-  include Binky::BuilderHelper
+  class Issue < ApplicationRecord
+    include Binky::BuilderHelper
+  end
+    
+  issue = Issue.new.build_by_keys({id: 1234},Issue.column_names) # => Issue.column_names = id:
+  issue.id # => 1234
 ```
 
-Call *initialize_by_keys* method once the model has been initialized passing a json message. 
-This method will *yield* self as a block. This method will also create an instance variable called *@to_hash*.
+Call *build_by_keys* method once the model has been initialized passing a json message,
+it will *yield* self as a block in case you want to perform further actions. 
+This method will also create an instance variable called *@to_hash* contains a pair-value hash as a result. 
 ```ruby  
-build_by_keys(json = {})(&:column_names) 
+  build_by_keys(json = {},keys = nil) 
 ```
+
+### Auxiliary methods
+Binky-Builder comes with two extra methods to search and create instance variable and methods.
+It creates a instance variable along with its accessor methods (read/write).
+```ruby  
+  accessor_builder(key, value) 
+```
+This method goes through the whole object, being a hash, looking for the passed key and return the value found.
+```ruby  
+  nested_hash_value(obj, key) 
+```
+
 
 ## Development
 
