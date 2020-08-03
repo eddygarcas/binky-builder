@@ -11,8 +11,8 @@ module Binky
       k = keys || json&.keys
       raise ArgumentError unless k&.respond_to?(:each)
       k.each do |key|
-        @to_hash.merge!({key => nested_hash_value(json,key)})
-      end unless json.blank?
+        @to_hash.merge!({key => nested_hash_value(json,key.to_sym)})
+      end unless json.nil?
       yield self if block_given?
     end
 
@@ -61,7 +61,7 @@ module Binky
       @attributes = {}
       json.each do |k, v|
         self.send("#{k}=", v)
-      end unless json.blank?
+      end unless json.nil?
     end
 
     def method_missing(name, *args)
@@ -82,10 +82,12 @@ module Binky
     class Error < StandardError; end
     include BuilderHelper
 
-    def initialize(json = {})
-      json.keys.each do |k|
-        self.send("#{k}=",nested_hash_value(json, k.to_s))
-      end unless json.blank?
+    def initialize(json = {}, keys = nil)
+      k = keys || json&.keys
+      k&.reject! {|key| key.to_s.include?("=")}
+      k&.each do |key|
+        self.send("#{key}=",nested_hash_value(json, key.to_sym))
+      end unless json.nil?
     end
 
     def method_missing(name,*args)
