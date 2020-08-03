@@ -22,20 +22,20 @@ class Binky::BuilderTest < Minitest::Test
   end
 
   def test_it_does_something_useful
-      elem = @obj.build_by_keys({id: 123,text: "gathering"},[:id,:text],&:to_hash)
+      elem = @obj.build_by_keys({"id" => 123,text: "gathering"},["id",:text],&:to_hash)
       assert_equal elem[:id],123
       assert_equal elem[:text],"gathering"
   end
 
   def test_using_builder_sym_keys
-    elements = MyBuilder.new.build_by_keys({id: 123,text: "gathering"},[:id,:text],&:to_hash)
+    elements = MyBuilder.new.build_by_keys({"id" => 123,text: "gathering"},["id",:text],&:to_hash)
     obj_builder = MyBuilder.new(elements)
     assert_equal obj_builder.id,123
     assert_equal obj_builder.text,"gathering"
   end
 
   def test_using_builder_text_keys
-    elements = MyBuilder.new.build_by_keys({id: 123,text: "gathering"},["id","text"],&:to_hash)
+    elements = MyBuilder.new.build_by_keys({"id" => 123,text: "gathering"},["id",:text],&:to_hash)
     obj_builder = MyBuilder.new(elements)
     assert_equal obj_builder.id,123
     assert_equal obj_builder.text,"gathering"
@@ -48,7 +48,7 @@ class Binky::BuilderTest < Minitest::Test
   end
 
   def test_accessor_builder
-    element = MyAccessorBuilder.new({id: 123,text: "gathering"},MyAccessorBuilder.instance_methods(false))
+    element = MyAccessorBuilder.new({"id" => 123,text: "gathering"},MyAccessorBuilder.instance_methods(false))
     assert_equal element.id,123
     assert_equal element.text,"gathering"
   end

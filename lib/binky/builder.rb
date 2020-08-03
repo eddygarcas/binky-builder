@@ -10,8 +10,9 @@ module Binky
       accessor_builder('to_hash',{})
       k = keys || json&.keys
       raise ArgumentError unless k&.respond_to?(:each)
+      json.transform_keys!(&:to_sym)
       k.each do |key|
-        @to_hash.merge!({key => nested_hash_value(json,key.to_sym)})
+        @to_hash.merge!({key.to_sym => nested_hash_value(json,key.to_sym)})
       end unless json.nil?
       yield self if block_given?
     end
@@ -85,6 +86,7 @@ module Binky
     def initialize(json = {}, keys = nil)
       k = keys || json&.keys
       k&.reject! {|key| key.to_s.include?("=")}
+      json.transform_keys!(&:to_sym)
       k&.each do |key|
         self.send("#{key}=",nested_hash_value(json, key.to_sym))
       end unless json.nil?
