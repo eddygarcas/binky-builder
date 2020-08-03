@@ -1,11 +1,11 @@
 require "test_helper"
 
 class MyBuilder
-  include Binky::Builder
+  include Binky::Struct
 end
 
 class MyAccessorBuilder
-  include Binky::AccessorBuilder
+  include Binky::Builder
   attr_accessor :id,:text
 end
 class Binky::BuilderTest < Minitest::Test
@@ -13,7 +13,7 @@ class Binky::BuilderTest < Minitest::Test
   def setup
     @obj = Object.new
     class << @obj
-      include Binky::BuilderHelper
+      include Binky::Helper
     end
   end
 

@@ -1,7 +1,7 @@
 require "binky/builder/version"
 
 module Binky
-  module BuilderHelper
+  module Helper
 
     # Parses a given json structure looking for specific keys inside the structure.
     # Keys are given through a block.
@@ -54,9 +54,9 @@ module Binky
     end
   end
 
-  module Builder
+  module Struct
     class Error < StandardError; end
-    include BuilderHelper
+    include Helper
 
     def initialize(json = nil)
       @attributes = {}
@@ -79,9 +79,9 @@ module Binky
     end
   end
 
-  module AccessorBuilder
+  module Builder
     class Error < StandardError; end
-    include BuilderHelper
+    include Helper
 
     def initialize(json = {}, keys = nil)
       k = keys || json&.keys
