@@ -2,8 +2,21 @@ require "binky/builder/version"
 
 module Binky
   module BuilderHelper
+
+    # Parses a given json structure looking for specific keys inside the structure.
+    # Keys are given through a block.
+    # The result of it it's stored on a instance variable called to_hash and accessible through accessors with same name.
+    def build_by_keys(json = {})
+      accessor_builder('to_hash',{})
+      keys = yield self || json&.keys
+      raise ArgumentError unless keys&.respond_to?(:each)
+      keys.each do |key|
+        @to_hash.merge!({key => nested_hash_value(json,key)})
+      end unless json&.blank?
+    end
+
     # Builds an instance variable as well as its class method accessors from a key value pair.
-    def accessor_builder k, v
+    def accessor_builder(k, v)
       self.instance_variable_set("@#{k}", v)
       self.class.send(:define_method, "#{k}", proc {self.instance_variable_get("@#{k}")})
       self.class.send(:define_method, "#{k}=", proc {|v| self.instance_variable_set("@#{k}", v)})
@@ -34,17 +47,8 @@ module Binky
       end
     end
 
-    # Parses a given json structure looking for specific keys inside the structure.
-    # The result of it it's stored on a instance variable called to_hash and accessible through accessors with same name.
-    def parse(json = {},keys = [])
-      accessor_builder('to_hash',{})
-      keys.each do |key|
-        @to_hash.merge!({key => nested_hash_value(json,key)})
-      end unless json.blank?
-    end
-
     def attribute_from_inner_key(element, attribute, inner_key = nil)
-      {attribute.to_sym => nested_hash_value(element, inner_key.present? ? inner_key : attribute.to_s)}
+      {attribute.to_sym => nested_hash_value(element, inner_key&.present? ? inner_key : attribute.to_s)}
     end
   end
 
@@ -56,7 +60,7 @@ module Binky
       @attributes = {}
       json.each do |k, v|
         self.send("#{k}=", v)
-      end unless json.blank?
+      end unless json&.blank?
     end
 
     def method_missing(name, *args)

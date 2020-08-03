@@ -17,8 +17,34 @@ Or install it yourself as:
     $ gem install binky-builder
 
 ## Usage
+OpenStruct and accessor builder modules.
 
-OpenStruct and accessor builder modules. 
+### Used as OpenStruct
+Initialize an instance using json data, including the Builder class on your class definition.
+Once initialized just use the accessors as a normal class instance. 
+```ruby
+  class Issue
+    include Binky::Builder
+    alias :super_initialize :initialize
+
+    def initialize(json = nil)
+      super_initialize json
+    end
+  end
+```
+
+### Used on ActiveRecord models
+Binky-Builder includes another helper that can be used to initialize *ActiveRecord* models based on its column names.
+```ruby
+class ChangeLog < ApplicationRecord
+  include Binky::BuilderHelper
+```
+
+Call *initialize_by_keys* method once the model has been initialized passing a json message. 
+This method will *yield* self as a block. This method will also create an instance variable called *@to_hash*.
+```ruby  
+build_by_keys(json = {})(&:column_names) 
+```
 
 ## Development
 
