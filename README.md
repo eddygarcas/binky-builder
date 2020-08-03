@@ -24,7 +24,7 @@ Initialize an instance using json data, including the Builder class on your clas
 Once initialized just use the accessors as any other instance. 
 ```ruby
   class Issue
-    include Binky::Builder
+    include Binky::Struct
     alias :super_initialize :initialize
 
     def initialize(json = nil)
@@ -40,11 +40,11 @@ Once initialized just use the accessors as any other instance.
 Binky-Builder includes another helper that can be used to initialize *ActiveRecord* models based on its column names.
 ```ruby
   class Issue < ApplicationRecord
-    include Binky::BuilderHelper
+    include Binky::Helper
   end
     
-  issue = Issue.new.build_by_keys({id: 1234},Issue.column_names) # => Issue.column_names = id:
-  issue.id # => 1234
+  issue = Issue.new.build_by_keys({id: 1234,text: "hocus pocus"},Issue.column_names) # => Issue.column_names = id:
+  issue.to_hash # => {id: 1234}
 ```
 
 Call *build_by_keys* method once the model has been initialized passing a json message,

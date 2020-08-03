@@ -10,11 +10,12 @@ module Binky
       accessor_builder('to_hash',{})
       k = keys || json&.keys
       raise ArgumentError unless k&.respond_to?(:each)
-      json.transform_keys!(&:to_sym)
+      json.transform_keys!(&:to_s)
       k.each do |key|
-        @to_hash.merge!({key.to_sym => nested_hash_value(json,key.to_sym)})
+        @to_hash.merge!({key.to_sym => nested_hash_value(json,key.to_s)})
       end unless json.nil?
       yield self if block_given?
+      self
     end
 
     # Builds an instance variable as well as its class method accessors from a key value pair.
@@ -86,9 +87,9 @@ module Binky
     def initialize(json = {}, keys = nil)
       k = keys || json&.keys
       k&.reject! {|key| key.to_s.include?("=")}
-      json.transform_keys!(&:to_sym)
+      json.transform_keys!(&:to_s)
       k&.each do |key|
-        self.send("#{key}=",nested_hash_value(json, key.to_sym))
+        self.send("#{key}=",nested_hash_value(json, key.to_s))
       end unless json.nil?
     end
 
