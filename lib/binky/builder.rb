@@ -12,7 +12,7 @@ module Binky
       raise ArgumentError unless k&.respond_to?(:each)
       k.each do |key|
         @to_hash.merge!({key => nested_hash_value(json,key)})
-      end unless json&.blank?
+      end unless json.blank?
       yield self if block_given?
     end
 
@@ -61,7 +61,7 @@ module Binky
       @attributes = {}
       json.each do |k, v|
         self.send("#{k}=", v)
-      end unless json&.blank?
+      end unless json.blank?
     end
 
     def method_missing(name, *args)
