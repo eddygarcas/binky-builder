@@ -1,6 +1,6 @@
 require "test_helper"
 
-class MyBuilder
+class MyStruct
   include Binky::Struct
 end
 
@@ -8,6 +8,11 @@ class MyAccessorBuilder
   include Binky::Builder
   attr_accessor :id,:text
 end
+
+class MyObjectBuilder
+  include Binky::Builder
+end
+
 
 class Changelog
   include Binky::Helper
@@ -55,21 +60,28 @@ class Binky::BuilderTest < Minitest::Test
   end
 
   def test_using_builder_sym_keys
-    elements = MyBuilder.new.build_by_keys({"id" => 123,text: "gathering"},["id",:text])
-    obj_builder = MyBuilder.new(elements.to_h)
+    elements = MyStruct.new.build_by_keys({"id" => 123,text: "gathering"},["id",:text])
+    obj_builder = MyStruct.new(elements.to_h)
     assert_equal obj_builder.id,123
     assert_equal obj_builder.text,"gathering"
   end
 
+  def test_if_struct_is_nil
+    str = MyStruct.new
+    str.id = 123
+    assert_equal str.id,123
+
+  end
+
   def test_using_builder_text_keys
-    elements = MyBuilder.new.build_by_keys({"id" => 123,text: "gathering"},["id",:text])
-    obj_builder = MyBuilder.new(elements.to_h)
+    elements = MyStruct.new.build_by_keys({"id" => 123,text: "gathering"},["id",:text])
+    obj_builder = MyStruct.new(elements.to_h)
     assert_equal obj_builder.id,123
     assert_equal obj_builder.text,"gathering"
   end
 
   def test_builder_directly
-    element = MyBuilder.new({"id" => 123,text: "gathering"})
+    element = MyStruct.new({"id" => 123,text: "gathering"})
     assert_equal element.id,123
     assert_equal element.text,"gathering"
   end
@@ -90,5 +102,20 @@ class Binky::BuilderTest < Minitest::Test
     e = Changelog.new.build_by_keys(@change_log)
     assert_equal e.items[0]["toString"],"Production"
     assert_equal e.items[0]["fromString"],"Ready for Production"
+  end
+
+  def test_empty_json
+    foo = MyObjectBuilder.new
+    foo.id = 123
+    foo.text = "gathering"
+    assert_equal foo.id,123
+    assert_equal foo.text,"gathering"
+    foo_dos = MyObjectBuilder.new
+    foo_dos.id = 321
+    foo_dos.text = "split"
+    foo_dos.goog = 23
+    assert_equal foo_dos.id,321
+    assert_equal foo_dos.text,"split"
+    assert_equal foo_dos.goog, 23
   end
 end

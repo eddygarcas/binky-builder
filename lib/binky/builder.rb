@@ -7,14 +7,15 @@ module Binky
     # Keys are given through a block.
     # The result of it it's stored on a instance variable called to_hash and accessible through accessors with same name.
     def build_by_keys(json = {}, keys = nil)
-      accessor_builder('to_h',{})
       k = keys || json&.keys
-      raise ArgumentError unless k&.respond_to?(:each)
+      raise ArgumentError "keys argument is not an array" unless k&.respond_to?(:each)
+      accessor_builder('to_h',{})
       json.transform_keys!(&:to_s)
-      k.each do |key|
+      k&.reject!{|ky| ky.end_with?('=')}
+      k&.each do |key|
         self.send("#{key}=",nested_hash_value(json, key.to_s))
         @to_h.merge!({key.to_sym => nested_hash_value(json,key.to_s)})
-      end unless json.nil?
+      end
       yield self if block_given?
       self
     end
@@ -43,7 +44,6 @@ module Binky
         obj[key]
       elsif obj.respond_to?(:each)
         r = nil
-        #The asterisk "splat" operator means you can pass multiple parameters in its place and the block will see them as an array.
         obj.find do |*a|
           r = nested_hash_value(a.last, key)
         end
@@ -55,8 +55,8 @@ module Binky
       accessor_builder name.to_s.chop, args[0]
     end
 
-    def attribute_from_inner_key(element, attribute, inner_key = nil)
-      {attribute.to_sym => nested_hash_value(element, inner_key&.present? ? inner_key : attribute.to_s)}
+    def attribute_from_inner_key(elem, attr, in_key = nil)
+      {attr.to_sym => nested_hash_value(elem, in_key&.present? ? in_key : attr.to_s)}
     end
   end
 
@@ -88,14 +88,7 @@ module Binky
   module Builder
     class Error < StandardError; end
     include Helper
-
-    def initialize(json = {}, keys = nil)
-      k = keys || json&.keys
-      k&.reject! {|key| key.to_s.include?("=")}
-      json.transform_keys!(&:to_s)
-      k&.each do |key|
-        self.send("#{key}=",nested_hash_value(json, key.to_s))
-      end unless json.nil?
-    end
+    alias_method :initialize,:build_by_keys
   end
+
 end
