@@ -7,12 +7,13 @@ module Binky
     # Keys are given through a block.
     # The result of it it's stored on a instance variable called to_hash and accessible through accessors with same name.
     def build_by_keys(json = {}, keys = nil)
-      accessor_builder('to_hash',{})
+      accessor_builder('to_h',{})
       k = keys || json&.keys
       raise ArgumentError unless k&.respond_to?(:each)
       json.transform_keys!(&:to_s)
       k.each do |key|
-        @to_hash.merge!({key.to_sym => nested_hash_value(json,key.to_s)})
+        self.send("#{key}=",nested_hash_value(json, key.to_s))
+        @to_h.merge!({key.to_sym => nested_hash_value(json,key.to_s)})
       end unless json.nil?
       yield self if block_given?
       self
@@ -48,6 +49,10 @@ module Binky
         end
         r
       end
+    end
+
+    def method_missing(name,*args)
+      accessor_builder name.to_s.chop, args[0]
     end
 
     def attribute_from_inner_key(element, attribute, inner_key = nil)
@@ -91,10 +96,6 @@ module Binky
       k&.each do |key|
         self.send("#{key}=",nested_hash_value(json, key.to_s))
       end unless json.nil?
-    end
-
-    def method_missing(name,*args)
-      accessor_builder name.to_s.chop, args[0]
     end
   end
 end

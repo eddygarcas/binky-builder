@@ -38,13 +38,19 @@ Once initialized just use the accessors as any other instance.
 
 ### Used on ActiveRecord models
 Binky-Builder includes another helper that can be used to initialize *ActiveRecord* models based on its column names.
+In case not using column names but an array of method names, new accessors would be crated to access those methods.
 ```ruby
   class Issue < ApplicationRecord
     include Binky::Helper
   end
     
   issue = Issue.new.build_by_keys({id: 1234,text: "hocus pocus"},Issue.column_names) # => Issue.column_names = id:
-  issue.to_hash # => {id: 1234}
+  issue.as_json # => {id: 1234}
+  
+  issue = Issue.new.build_by_keys({id: 1234,text: "hocus pocus"}) # => Issue.column_names = id:
+  issue.id # => {id: 1234}
+  issue.text # => {text: "hocus pocus"}
+  issue.to_hash #=> {id: 1234,text: "hocus pocus"}
 ```
 
 Call *build_by_keys* method once the model has been initialized passing a json message,
