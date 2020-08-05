@@ -9,12 +9,12 @@ module Binky
     def build_by_keys(json = {}, keys = nil)
       k = keys || json&.keys
       raise ArgumentError "keys argument is not an array" unless k&.respond_to?(:each)
-      accessor_builder('to_h',{})
+      accessor_builder('to_h',{}) unless self.class.method_defined?(:as_json)
       json.transform_keys!(&:to_s)
       k&.reject!{|ky| ky.end_with?('=')}
       k&.each do |key|
         self.send("#{key}=",nested_hash_value(json, key.to_s))
-        @to_h.merge!({key.to_sym => nested_hash_value(json,key.to_s)})
+        @to_h&.merge!({key.to_sym => nested_hash_value(json,key.to_s)})
       end
       yield self if block_given?
       self
