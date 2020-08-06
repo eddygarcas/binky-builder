@@ -6,11 +6,25 @@ end
 
 class Binky::StructTest < Minitest::Test
   def setup
-
+    @simple_struct = {
+        "id" => "5357608",
+        "author" => "hocus.pocus",
+        "key" => "hocus.pocus",
+        "emailAddress" => "hocus.pocus@binky-builder.com",
+        "displayName" => "Hocus Pocus",
+        "active" => true,
+        "timeZone" => "Europe/Madrid"
+    }
   end
 
   def teardown
+    @simple_struct = nil
+  end
 
+  def test_struct_getting_as_json
+    el = MyStruct.new(@simple_struct)
+    assert_equal el.to_h["id"],el.id
+    assert_equal el.to_h["author"],el.author
   end
 
   def test_using_builder_sym_keys
