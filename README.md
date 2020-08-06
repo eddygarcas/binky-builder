@@ -46,19 +46,23 @@ In case not using column names but an array of method names, new accessors would
     
   issue = Issue.new.build_by_keys({id: 1234,text: "hocus pocus"},Issue.column_names) # => Issue.column_names = id:
   issue.as_json # => {id: 1234}
+  issue.to_h # => nil
   
   issue = Issue.new.build_by_keys({id: 1234,text: "hocus pocus"}) # => Issue.column_names = id:
   issue.id # => {id: 1234}
   issue.text # => {text: "hocus pocus"}
-  issue.to_hash #=> {id: 1234,text: "hocus pocus"}
+  issue.as_json #=> {id: 1234,text: "hocus pocus"}
+  issue.to_h # => nil
 ```
 
+
 Call *build_by_keys* method once the model has been initialized passing a json message,
-it will *yield* self as a block in case you want to perform further actions. 
-This method will also create an instance variable called *@to_hash* contains a pair-value hash as a result. 
+it would *yield* itself as a block in case you want to perform further actions. 
 ```ruby  
   build_by_keys(json = {},keys = nil) 
 ```
+This method would also create an instance variable called *@to_h* contains a pair-value hash as a result. 
+*@to_h* instance variable won't be available if the class inherits from *ActiveRecord::Base* 
 
 ### Auxiliary methods
 Binky-Builder comes with two extra methods to search and create instance variable and methods.
