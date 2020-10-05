@@ -25,10 +25,9 @@ Once initialized just use the accessors as any other instance.
 ```ruby
   class Issue
     include Binky::Struct
-    alias :super_initialize :initialize
 
     def initialize(json = nil)
-      super_initialize json
+      super initialize json
     end
   end
   
