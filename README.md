@@ -27,7 +27,7 @@ Once initialized just use the accessors as any other instance.
     include Binky::Struct
 
     def initialize(json = nil)
-      super initialize json
+      super json
     end
   end
   
