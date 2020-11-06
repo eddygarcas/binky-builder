@@ -7,5 +7,5 @@
 /spec/reports/
 /tmp/
 /.idea/*
-/.idea
 Gemfile.lock
+/.idea/

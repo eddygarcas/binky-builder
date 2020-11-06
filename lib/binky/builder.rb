@@ -52,7 +52,7 @@ module Binky
     end
 
     def method_missing(name,*args)
-      accessor_builder name.to_s.chop, args[0]
+      accessor_builder(name.to_s.gsub('/=$/',''), args[0]) if name.to_s =~ /=$/
     end
 
     def attribute_from_inner_key(elem, attr, in_key = nil)
